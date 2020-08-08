@@ -1,0 +1,2 @@
+rootProject.name='DashixunDemo'
+include ':app', ':httplibrary1', ':mvplibrary'
