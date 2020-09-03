@@ -1,7 +1,13 @@
 package com.example.dashixundemo.fragment;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -9,16 +15,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.bumptech.glide.Glide;
 import com.example.dashixundemo.GalleryFlow;
-import com.example.dashixundemo.MainActivity;
 import com.example.dashixundemo.R;
 import com.example.dashixundemo.adapter.MyViewPagerAdapter;
 import com.example.dashixundemo.adapter.RcyAdapter;
 import com.example.dashixundemo.huabu.GallyPageTransformer;
-import com.example.dashixundemo.uitl.ImageUtil;
+import com.example.dashixundemo.zxing.ScanActivity;
+import com.example.dashixundemo.zxing.utils.BitmapUtil;
 import com.example.mvplibrary.base2.BaseFragment;
 import com.youth.banner.Banner;
 import com.youth.banner.loader.ImageLoader;
@@ -38,6 +45,7 @@ import butterknife.ButterKnife;
  */
 public class ZhuyeFragment extends BaseFragment {
 
+    private static final int PERMS_REQUEST_CODE =202 ;
     @BindView(R.id.banner)
     Banner banner;
 
@@ -45,7 +53,8 @@ public class ZhuyeFragment extends BaseFragment {
     ImageView im;
     @BindView(R.id.rcy)
     RecyclerView rcy;
-
+    private int SCAN_REQUEST_CODE=200;
+    private int SELECT_IMAGE_REQUEST_CODE=201;
     GalleryFlow galleryFlow;
     String HOME_BAN_ONE = "http:\\/\\/www.qubaobei.com\\/ios\\/cf\\/uploadfile\\/132\\/11\\/10509.jpg";
 
@@ -71,6 +80,15 @@ public class ZhuyeFragment extends BaseFragment {
     ViewPager mViewPager;
     @BindView(R.id.linearLayout3)
     LinearLayout ll_main;
+    @BindView(R.id.saoyisao)
+    ImageView saoyisao;
+    @BindView(R.id.ll)
+    LinearLayout ll;
+    @BindView(R.id.linearLayout)
+    LinearLayout linearLayout;
+
+    @BindView(R.id.linearLayout2)
+    LinearLayout linearLayout2;
 
 
     private ArrayList<String> list;
@@ -86,14 +104,20 @@ public class ZhuyeFragment extends BaseFragment {
     }
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_zhuye, container, false);
         ButterKnife.bind(this, view);
-        initData1();
+
+        //6.0版本或以上需请求权限
+        String[] permissions = new String[]{Manifest.permission.
+                WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            requestPermissions(permissions, PERMS_REQUEST_CODE);
+        }
+
 
         mViewPager.setOffscreenPageLimit(3);
         pagerWidth = (int) (getResources().getDisplayMetrics().widthPixels * 3.0f / 5.0f);
@@ -115,6 +139,7 @@ public class ZhuyeFragment extends BaseFragment {
         mViewPager.setAdapter(new MyViewPagerAdapter(imageViews));
         mViewPager.setPageTransformer(true, new GallyPageTransformer());
         mViewPager.setAdapter(new MyViewPagerAdapter(imageViews));
+        initListener();
         return view;
     }
 
@@ -137,21 +162,50 @@ public class ZhuyeFragment extends BaseFragment {
                 .start();
         initTong();
         initRcy();
-        inithua();
+        initData1();
 
     }
 
-    private void inithua() {
-
+    private void initListener() {
+        saoyisao.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mActivity, ScanActivity.class);
+                startActivityForResult(intent,SCAN_REQUEST_CODE);
+            }
+        });
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode==SELECT_IMAGE_REQUEST_CODE){//从图库选择图片
+            String[] proj = {MediaStore.Images.Media.DATA};
+            // 获取选中图片的路径
+            Cursor cursor = getContext().getContentResolver().query(data.getData(),proj, null, null, null);
+            if (cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                String photoPath = cursor.getString(columnIndex);
+                String result= BitmapUtil.parseQRcode(photoPath);
+                if (!TextUtils.isEmpty(result)) {
+                    Toast.makeText(mActivity, "从图库选择的图片识别结果:"+result, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(mActivity, "从图库选择的图片不是二维码图片", Toast.LENGTH_SHORT).show();
+                }
+            }
+            cursor.close();
+        }else if (requestCode == SCAN_REQUEST_CODE && resultCode == -1) {
+            String input = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+            Toast.makeText(mActivity, "扫描结果:"+input, Toast.LENGTH_SHORT).show();
+        }
+    }
     private void initTong() {
         title = new ArrayList<>();
         title.add("没有什么退路，只有咬牙坚持走下去的路！");
         title.add("今天的你依旧帅气如初 ");
         title.add("愿十年之后的自己会感谢当初努力奋斗的你");
-        title.add("日子再甜,也没有你甜");
-        title.add("喜欢阿羡也喜欢李现但更喜欢你现（出现）");
+
         for (int i = 0; i < title.size(); i++) {
             View view = LayoutInflater.from(getActivity()).inflate(R.layout.title_view, null);
             TextView tvTitle = view.findViewById(R.id.tvItem);
@@ -200,22 +254,25 @@ public class ZhuyeFragment extends BaseFragment {
 
     private void initData1() {
         imageViews = new ArrayList<>();
-
-
         ImageView first = new ImageView(getActivity());
-        first.setImageBitmap(ImageUtil.getReverseBitmapById(R.drawable.cccc, getActivity()));
+        Glide.with(this).load(R.drawable.cccc).into(first);
+        //    first.setImageBitmap(ImageUtil.getReverseBitmapById(R.drawable.cccc, getActivity()));
 //        first.setImageResource(R.mipmap.first);
         ImageView second = new ImageView(getActivity());
-        second.setImageBitmap(ImageUtil.getReverseBitmapById(R.drawable.caise, getActivity()));
+        // second.setImageBitmap(ImageUtil.getReverseBitmapById(R.drawable.caise, getActivity()));
+        Glide.with(this).load(R.drawable.caise).into(second);
 //        second.setImageResource(R.mipmap.second);
         ImageView third = new ImageView(getActivity());
-        third.setImageBitmap(ImageUtil.getReverseBitmapById(R.drawable.cccc, getActivity()));
+        // third.setImageBitmap(ImageUtil.getReverseBitmapById(R.drawable.cccc, getActivity()));
+        Glide.with(this).load(R.drawable.cccc).into(third);
 //        third.setImageResource(R.mipmap.third);
         ImageView fourth = new ImageView(getActivity());
-        fourth.setImageBitmap(ImageUtil.getReverseBitmapById(R.drawable.caise,getActivity()));
-  //      fourth.setImageResource(R.drawable.cccc);
+        //  fourth.setImageBitmap(ImageUtil.getReverseBitmapById(R.drawable.caise,getActivity()));
+        //      fourth.setImageResource(R.drawable.cccc);
+        Glide.with(this).load(R.drawable.caise).into(fourth);
         ImageView fifth = new ImageView(getActivity());
-        fifth.setImageBitmap(ImageUtil.getReverseBitmapById(R.drawable.carr, getActivity()));
+        Glide.with(this).load(R.drawable.cccc).into(fifth);
+        //   fifth.setImageBitmap(ImageUtil.getReverseBitmapById(R.drawable.carr, getActivity()));
 //        fifth.setImageResource(R.mipmap.fifth);
         imageViews.add(first);
         imageViews.add(second);
@@ -223,5 +280,5 @@ public class ZhuyeFragment extends BaseFragment {
         imageViews.add(fourth);
         imageViews.add(fifth);
     }
-    }
+}
 

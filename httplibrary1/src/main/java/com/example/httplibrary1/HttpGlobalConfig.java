@@ -6,6 +6,7 @@ import android.os.Looper;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +27,8 @@ public class HttpGlobalConfig {
     private boolean isShowLog;
     private Context context;
     private Handler handler;
+
+    private Map<String,String> appkeys;
 
     private HttpGlobalConfig() {
 
@@ -107,5 +110,22 @@ public class HttpGlobalConfig {
         this.context = context.getApplicationContext();
         handler = new Handler(Looper.getMainLooper());
         return HttpGlobalConfig.getInstance();
+    }
+    //配置各种appk
+    public HttpGlobalConfig setAppKey(String key,String value){
+        if(appkeys==null){
+            appkeys=new HashMap<>();
+        }
+        appkeys.put(key,value);
+        return HttpGlobalConfig.getInstance();
+    }
+
+
+    //获取对应的appKey
+    public Object getAppkey(String key){
+        if(appkeys!=null&&key!=null){
+            return appkeys.get(key);
+        }
+        return null;
     }
 }

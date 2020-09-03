@@ -8,7 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.trello.rxlifecycle2.components.RxFragment;
+
+import com.trello.rxlifecycle2.components.support.RxFragment;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -23,7 +24,7 @@ import butterknife.Unbinder;
  * 创建时间：2020/8/5  15:32
  * 描述：TODO
  */
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseFragment extends RxFragment {
     public Activity mActivity;
     public Context context;
     private View rootView;
@@ -40,7 +41,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         if(rootView==null){
-            rootView=inflater.inflate(initLayoutId(),null);
+            rootView=inflater.inflate(initLayoutId(), (ViewGroup) rootView,false);
         }
         unbinder = ButterKnife.bind(this, rootView);
         return rootView;

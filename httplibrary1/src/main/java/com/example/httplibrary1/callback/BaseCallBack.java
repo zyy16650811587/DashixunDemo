@@ -18,7 +18,7 @@ public abstract class BaseCallBack<T> extends BaseObserver {
         Log.e("111", "onNext:111"+t.toString() );
         //返回的是个json串
         T parse = parse((String) t);
-        Log.e("111", "onNext:222"+parse.toString() );
+//        Log.e("111", "onNext:222"+parse.toString() );
         if(callSuccess&&isCodeSuccess()){
             onSuccess(parse);
         }

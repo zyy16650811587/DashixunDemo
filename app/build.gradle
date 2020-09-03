@@ -6,7 +6,7 @@ android {
 
 
     defaultConfig {
-        applicationId "com.example.dashixundemo"
+        applicationId "com.example.liangxq.shopping"
         minSdkVersion 22
         targetSdkVersion 29
         versionCode 1
@@ -14,8 +14,11 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {
-            // 设置支持的SO库架构
-            abiFilters 'armeabi' //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+            //选择要添加的对应 cpu 类型的 .so 库。
+            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a'
+            // 还可以添加 'x86', 'x86_64', 'mips', 'mips64'
+//            // 设置支持的SO库架构
+//            abiFilters 'armeabi' //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
         }
         signingConfigs {
             debug {
@@ -32,6 +35,34 @@ android {
             }
         }
 
+        manifestPlaceholders = [
+                JPUSH_PKGNAME: "com.example.liangxq.shopping",
+                JPUSH_APPKEY : "168bc3ce15b62b3fa2eb9721", //JPush 上注册的包名对应的 Appkey.
+                JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
+//                JPUSH_PKGNAME : "com.android.knowme",
+//                JPUSH_APPKEY : "4f1231ffa6da5ab3a461c7dd", //JPush 上注册的包名对应的 Appkey.
+//                JPUSH_CHANNEL : "developer-default", //暂时填写默认值即可.
+        ]
+
+
+//        signingConfigs {
+//            release {
+//                storeFile file('zhiwozhixiang.jks')
+//                keyAlias "bjqjqc"
+////            keyPassword System.getenv("zwzx_key_store_pw")
+////            storePassword System.getenv("zwzx_key_store_pw2")
+//                keyPassword "zhiwozhixiang@"
+//                storePassword "zhiwozhixiang@"
+//            }
+//
+//            debug {
+//                storeFile file('zhiwozhixiang.jks')
+//                keyAlias "bjqjqc"
+//                keyPassword "zhiwozhixiang@"
+//                storePassword "zhiwozhixiang@"
+//            }
+//        }
+
 
     }
 
@@ -42,13 +73,13 @@ android {
         }*/
         release {
             signingConfig signingConfigs.release
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
         debug {
             signingConfig signingConfigs.debug
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -62,6 +93,18 @@ android {
             jniLibs.srcDir 'libs'
         }
     }
+
+    configurations.all {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            def requested = details.requested
+            if (requested.group == 'com.android.support') {
+                if (!requested.name.startsWith("multidex")) {
+                    details.useVersion '29.0.0'
+                }
+            }
+        }
+    }
+
 }
 
 dependencies {
@@ -76,8 +119,8 @@ dependencies {
     implementation project(path: ':mvplibrary')
     implementation project(path: ':httplibrary1')
 
-   implementation 'com.jakewharton:butterknife:10.0.0'
-   annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
+    implementation 'com.jakewharton:butterknife:10.0.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
 
 
 //    implementation 'com.tencent.bugly:crashreport:latest.release' //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.2.0
@@ -101,11 +144,55 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.github.bumptech.glide:glide:4.11.0'//Glide 4.x
 
-
- /*   implementation 'com.github.crosswall:Android-Coverflow:release-v1.0.4'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'//RecyclerView依赖
+    // implementation 'com.github.crosswall:Android-Coverflow:release-v1.0.4'
 //倒三角
-    implementation 'com.github.shts:TriangleLabelView:1.1.0'*/
+    //  implementation 'com.github.shts:TriangleLabelView:1.1.0'
+
+    //TabLayout
+    //implementation 'com.android.support:design:29.+'
+
+    implementation 'q.rorbin:VerticalTabLayout:1.2.5'
+//
+//万能适配器依赖
+    // implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.50'
+
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.50'
+
+    //noinspection GradleCompatible
+    implementation 'com.android.support:cardview-v7:28.0.0'
+//eventbus/
+    implementation 'org.greenrobot:eventbus:3.1.1'
+
+    //  implementation project(path: ':libumengsharelogin')
+//流水布局
+    //  implementation 'com.github.AnJiaoDe:MultiFlowLayout:V1.1.2'
+    // implementation 'com.hyman:flowlayout-lib:1.1.2'
+
+    implementation 'com.zhy:flowlayout-lib:1.0.3'
 
 
+//极光推送
+    implementation 'cn.jiguang.sdk:jpush:3.7.0'  // 此处以JPush 3.7.0 版本为例。
+    implementation 'cn.jiguang.sdk:jcore:2.4.2'  // 此处以JCore 2.4.2 版本为例。
 
+//二维码
+    implementation 'com.google.zxing:core:3.3.3'
+
+
+    //圆形imageView
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    //选择弹窗
+    implementation 'com.bigkoo:alertview:1.0.3'
+
+    //相册选择框架
+    implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.5.8'
+
+    //购物车数量加减控件
+    implementation 'ren.qinc.numberbutton:numberbutton:0.0.1'
+    api 'com.zhy:flowlayout-lib:1.0.3'
+
+    // 支付宝支付
+    compile(name: 'alipaySdk-15.7.9-20200727142846', ext: 'aar')
 }

@@ -46,12 +46,15 @@ public class JsonUtils {
 
     /**
      *
+     * @param <T>
      * @param data  json字符串
      * @param tClass 实体类Class类型
-     * @param <T>
      * @return
      */
     public static <T> T jsonToClass(JsonElement data, Class<T> tClass){
+        return new Gson().fromJson(data,tClass);
+    }
+    public static <T> T jsonToClass(String data, Class<T> tClass){
         return new Gson().fromJson(data,tClass);
     }
     //实体类转json字符串

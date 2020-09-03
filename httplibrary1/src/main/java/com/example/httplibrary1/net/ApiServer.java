@@ -10,6 +10,7 @@ import io.reactivex.Observer;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
@@ -41,7 +42,7 @@ public interface ApiServer {
 
     //上传json
     @POST
-    Observable<JsonElement>postjson(@Url String url,RequestBody requestBody,@HeaderMap Map<String,Object>heards);
+    Observable<JsonElement>postjson(@Url String url, @Body RequestBody requestBody, @HeaderMap Map<String,Object>heards);
 
     @DELETE
     Observable<JsonElement>delete(@Url String url, @QueryMap Map<String, Object> params, @HeaderMap Map<String, Object> heards);

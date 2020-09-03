@@ -12,7 +12,7 @@ import com.example.httplibrary1.HttpGlobalConfig;
  */
 public class LogUtils {
 
-    private static final String TAG = "RHttp";
+    private static final String TAG = "ZYY";
     private static boolean allowD = true;
     private static boolean allowE = true;
     private static boolean allowI = true;

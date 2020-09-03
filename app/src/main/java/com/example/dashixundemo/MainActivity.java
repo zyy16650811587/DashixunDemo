@@ -1,5 +1,7 @@
 package com.example.dashixundemo;
 
+import android.Manifest;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 
@@ -10,6 +12,7 @@ import com.example.dashixundemo.fragment.MessageFragment;
 import com.example.dashixundemo.fragment.ShopFragment;
 import com.example.dashixundemo.fragment.ShowFragment;
 import com.example.dashixundemo.fragment.ZhuyeFragment;
+import com.example.dashixundemo.fragment.fragment.CartFragment;
 
 import java.util.ArrayList;
 
@@ -25,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private int lastSelectedPosition = 5;
     private ZhuyeFragment zhuyeFragment;
     private ShowFragment showFragment;
-    private ShopFragment shopFragment;
+    private CartFragment shopFragment;
     private MessageFragment messageFragment;
     private MeFragment meFragment;
     private FragmentManager sm;
@@ -35,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+
+
     }
 
     private void initView() {
@@ -43,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         zhuyeFragment = new ZhuyeFragment();
         showFragment = new ShowFragment();
-        shopFragment = new ShopFragment();
+        shopFragment = new CartFragment();
         messageFragment = new MessageFragment();
         meFragment = new MeFragment();
         sm = getSupportFragmentManager();

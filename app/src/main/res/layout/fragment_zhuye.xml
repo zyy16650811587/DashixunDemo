@@ -36,10 +36,12 @@
             android:editable="false"
             android:cursorVisible="false"
             android:textCursorDrawable="@null"/>
+
         <ImageView
-            android:layout_width="wrap_content"
+            android:id="@+id/saoyisao"
+            android:layout_width="19dp"
             android:layout_height="wrap_content"
-            android:background="@mipmap/icon_scan"/>
+            android:background="@mipmap/icon_scan" />
     </LinearLayout>
     <!-- TODO: Update blank fragment layout -->
     <com.youth.banner.Banner
@@ -110,7 +112,7 @@
     <LinearLayout
         app:layout_constraintTop_toBottomOf="@id/rcy"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="350dp"
         android:id="@+id/linearLayout3"
         android:background="@drawable/home_containter"
         android:clipChildren="false"
@@ -130,6 +132,7 @@
             tools:layout_editor_absoluteY="489dp">
 
         </androidx.viewpager.widget.ViewPager>
+
     </LinearLayout
 >
 
