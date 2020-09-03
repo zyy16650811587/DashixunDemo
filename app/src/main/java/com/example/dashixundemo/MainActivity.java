@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 .addItem(new BottomNavigationItem(R.drawable.myshop5,"我的"))
                 .setFirstSelectedPosition(lastSelectedPosition)
                 .initialise();
-
+//对bnb进行监听
         bnb.setTabSelectedListener(new BottomNavigationBar.OnTabSelectedListener() {
             @Override
             public void onTabSelected(int position) {
